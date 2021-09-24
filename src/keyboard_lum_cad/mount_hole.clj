@@ -16,6 +16,9 @@
 (def hole-height 3.0)
 (def wall-width 2.25)
 
+(def corner-height 2.0)
+(def corner-delta 0.01)
+
 (def mount-hole
   "mount hole object for cherry MX switch"
   (let [square-out (square (+ hole-size (* wall-width 2))
@@ -40,3 +43,21 @@
                                     nail-void)
                         (translate [0 0 (- hole-height)]))]
     mount-hole))
+
+(def mount-corners
+  "corner object for cherry MX switch mount hole"
+  (let [displace (+ (/ hole-size 2) wall-width)
+        element (->> (cylinder corner-delta hole-height :center true)
+                     (with-fn 16))]
+    {:left-down (translate
+                 [(- displace) (- displace) (- (/ hole-height 2))]
+                 element)
+     :right-down (translate
+                  [displace (- displace) (- (/ hole-height 2))]
+                  element)
+     :right-up (translate
+                [displace displace (- (/ hole-height 2))]
+                element)
+     :left-up (translate
+               [(- displace) displace (- (/ hole-height 2))]
+               element)}))
