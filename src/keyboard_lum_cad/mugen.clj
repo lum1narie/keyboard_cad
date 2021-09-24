@@ -8,8 +8,8 @@
 (def mugen-size-real 18.5)
 (def mugen-height-real 1.5)
 
-(def burr-length 1)
-(def burr-width 2) ;; actual size is 1
+(def burr-length 1.0)
+(def burr-width 2.0) ;; actual size is 1
 (def socket-height-real 1.3)
 
 (def wall-width 1.5)
@@ -90,6 +90,7 @@
                                    [(get loc-x 1) (get loc-y 0)]
                                    [(get loc-x 2) (get loc-y 0)]
                                    [(get loc-x 2) (get loc-y 3)]])
+                         (mirror [1 0 0])
                          (extrude-linear {:height thin-base-height
                                           :center false})
                          (translate [0 0 (- outer-height)]))
@@ -112,6 +113,7 @@
                                            [(get hic-x 7) (get hic-y 1)]
                                            [(get hic-x 6) (get hic-y 1)]
                                            [(get hic-x 6) (get hic-y 4)]]))
+                          (mirror [1 0 0])
                           (extrude-linear
                            {:height
                             (- (+ socket-height thin-base-height) cover-delta)
