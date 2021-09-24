@@ -1,7 +1,12 @@
 (ns keyboard-lum-cad.core
-  (:gen-class))
+  (:gen-class)
+  (:refer-clojure :exclude [use import])
+  (:require [scad-clj.scad :refer :all]
+            [scad-clj.model :refer :all]
+            [keyboard-lum-cad.mugen :refer :all]))
 
 (defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+  [& _args]
+  (.mkdirs (java.io.File. "things/parts/"))
+  (spit "things/parts/mugen.scad"
+        (write-scad mugen-test)))
