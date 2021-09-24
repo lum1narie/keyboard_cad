@@ -1,0 +1,21 @@
+
+# ==== Emojis ====
+# 🌱  :seedling:     Initial Commit
+# 🐛  :bug:          バグ修正
+# 🎨  :art:          UIの修正・改善
+# ⚡  :zap:          General Update
+# ✨  :sparkles:     部分的な機能追加
+# 🎉  :tada:         大きな機能追加
+# ♻️  :recycle:       リファクタリング
+# 💥  :boom:         Breaking Change
+# 🗑️  :wastebasket:  不要な機能・使われなくなった機能の削除
+# 💚  :green_heart:  テストやCIの修正・改善
+# 👕  :shirt:        Lintエラーの修正やコードスタイルの修正
+# 🚀  :rocket:       パフォーマンス改善
+# 🆙  :up:           依存パッケージなどのアップデート
+# 🚑  :ambulance:    HotFix
+# 📚  :books:        ドキュメント
+# ⚙️  :gear:          Config
+# 🐳  :whale:        Docker関連
+# 👮  :cop:          セキュリティ関連の改善
+# 🚧  :construction: WIP
