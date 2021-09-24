@@ -3,10 +3,13 @@
   (:refer-clojure :exclude [use import])
   (:require [scad-clj.scad :refer :all]
             [scad-clj.model :refer :all]
-            [keyboard-lum-cad.mugen :refer :all]))
+            [keyboard-lum-cad.mugen :as mugen]
+            [keyboard-lum-cad.mount-hole :as mhole]))
 
 (defn -main
   [& _args]
   (.mkdirs (java.io.File. "things/parts/"))
   (spit "things/parts/mugen.scad"
-        (write-scad mugen-test)))
+        (write-scad mugen/mugen-test))
+  (spit "things/parts/mount-hole.scad"
+        (write-scad mhole/mount-test)))
