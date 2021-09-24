@@ -145,3 +145,12 @@
      :left-up (translate
                [(- displace) displace (- (/ cover-height 2))]
                element)}))
+
+(def mugen-test
+  "test object of mugen"
+  (union mugen-cover
+         (->> (hull (mugen-corners :left-down)
+                    (mugen-corners :right-down)
+                    (mugen-corners :right-up)
+                    (mugen-corners :left-up))
+              (translate [30 0 0]))))

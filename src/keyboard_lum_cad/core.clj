@@ -9,4 +9,4 @@
   [& _args]
   (.mkdirs (java.io.File. "things/parts/"))
   (spit "things/parts/mugen.scad"
-        (write-scad mugen-cover)))
+        (write-scad mugen-test)))
