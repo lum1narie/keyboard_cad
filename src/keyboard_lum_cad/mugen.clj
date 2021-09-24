@@ -4,7 +4,7 @@
             [scad-clj.model :refer :all]))
 
 ;; variables for mugen
-
+;;
 (def mugen-size-real 18.5)
 (def mugen-height-real 1.5)
 
@@ -12,26 +12,24 @@
 (def burr-width 2) ;; actual size is 1
 (def socket-height-real 1.3)
 
-(def mugen-size-err (* mugen-size-real 0.025))
+(def wall-width 1.5)
+(def thin-base-height 1.5)
 
+(def mugen-size-err (* mugen-size-real 0.025))
 (def mugen-height-err (* mugen-height-real 0.025))
 (def socket-height-err (* socket-height-real 0.025))
 
+(def mugen-size (+ mugen-size-real mugen-size-err))
+(def mugen-height (+ mugen-height-real mugen-height-err))
+(def socket-height (+ socket-height-err socket-height-real))
+
 ;; variables for cover
-
-(def wall-width 1.5)
-(def thin-base-height 1.5)
+;;
 (def cover-delta 0.001)
-
-;; varibles for TODO:
 
 (def mugen-cover
   "cover object for \"mugen no kanosei ConTaiNeR\""
-  (let [mugen-size (+ mugen-size-real mugen-size-err)
-        mugen-height (+ mugen-height-real mugen-height-err)
-        socket-height (+ socket-height-err socket-height-real)
-
-        outer-height (+ mugen-height socket-height thin-base-height)
+  (let [outer-height (+ mugen-height socket-height thin-base-height)
         outer-width (+ mugen-size (* wall-width 2))
         hole-width mugen-size
 
@@ -122,3 +120,28 @@
 
         cover (union lower-cover higher-cover)]
     (union outer cover)))
+
+;; variables for corner
+;;
+(def corner-height 3.0)
+(def corner-delta 0.01)
+
+(def mugen-corners
+  "corner object for \"mugen no kanosei ConTaiNeR\""
+  (let [cover-height (+ mugen-height socket-height thin-base-height)
+        displace (+ (/ mugen-size 2) wall-width)
+
+        element (->> (cylinder corner-delta corner-height :center true)
+                     (with-fn 16))]
+    {:left-down (translate
+                 [(- displace) (- displace) (- (/ cover-height 2))]
+                 element)
+     :right-down (translate
+                  [displace (- displace) (- (/ cover-height 2))]
+                  element)
+     :right-up (translate
+                [displace displace (- (/ cover-height 2))]
+                element)
+     :left-up (translate
+               [(- displace) displace (- (/ cover-height 2))]
+               element)}))
