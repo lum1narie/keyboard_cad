@@ -61,3 +61,12 @@
      :left-up (translate
                [(- displace) displace (- (/ hole-height 2))]
                element)}))
+
+(def mount-test
+  "test object of mugen"
+  (union mount-hole
+         (->> (hull (mount-corners :left-down)
+                    (mount-corners :right-down)
+                    (mount-corners :right-up)
+                    (mount-corners :left-up))
+              (translate [30 0 0]))))
