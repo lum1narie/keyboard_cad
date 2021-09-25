@@ -73,7 +73,6 @@
         fills-vertical (for [x (range 1 row-max)
                              y (range 1 (+ col-max 1))]
                          (vertical-fill x y trans-func corners))
-
         fills-horizontal (for [x (range 1 (+ row-max 1))
                                y (range 1 col-max)]
                            (horizontal-fill x y trans-func corners))
