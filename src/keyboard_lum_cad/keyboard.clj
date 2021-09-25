@@ -104,12 +104,19 @@
                                    mugen/mugen-cover mugen/mugen-corners)]
     (model/union mount mugen)))
 
+(defn translate-keycap
+  "translate block to keycap's position"
+  [row col block]
+  (->> block
+       (model/translate [0 0 2.0])
+       (translate-key row col)))
+
 (def keyboard-test
   "test object for keyboard, includes mock keycaps"
   (let [row-num 3
         col-num 5
 
-        keycaps (place-grid row-num col-num translate-key
+        keycaps (place-grid row-num col-num translate-keycap
                             kmock/keycap-mock)
         keyboard-with-cap (model/union keyboard keycaps)]
     keyboard-with-cap))
