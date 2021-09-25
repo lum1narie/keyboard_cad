@@ -7,7 +7,9 @@
 
 (def mount-foot-distance 6)
 
-(defn translate-key [row col block]
+(defn translate-key
+  "translate block to key's position"
+  [row col block]
   (let [r 90
 
         row-angle (/ model/pi 12)
@@ -22,18 +24,24 @@
          (model/rotate [0 theta 0])
          (model/translate [0 0 r]))))
 
-(defn translate-mugen [row col block]
+(defn translate-mugen
+  "translate block to mugen's position"
+  [row col block]
   (->> block
        (model/translate [0 0 (- mount-foot-distance)])
        (translate-key row col)))
 
-(defn place-grid [row-max col-max trans-func solid]
+(defn place-grid
+  "place solid object into grid"
+  [row-max col-max trans-func solid]
   (apply model/union
          (for [x (range 1 (+ 1 row-max))
                y (range 1 (+ 1 col-max))]
            (trans-func x y solid))))
 
-(defn fill-grid [row-max col-max trans-func corners]
+(defn fill-grid
+  "fill hull within corners in grid"
+  [row-max col-max trans-func corners]
   (let [vertical-fill (fn [row col trans-func corners]
                         (model/hull (trans-func row col
                                                 (corners :left-down))
@@ -78,11 +86,14 @@
                    fills-horizontal
                    fills-diagonal))))
 
-(defn place-and-fill-grid [row-max col-max trans-func solid corners]
+(defn place-and-fill-grid
+  "place solid and fill hull within corners as grid"
+  [row-max col-max trans-func solid corners]
   (model/union (place-grid row-max col-max trans-func solid)
                (fill-grid row-max col-max trans-func corners)))
 
 (def keyboard
+  "WIP keyboard object"
   (let [row-num 3
         col-num 5
 
@@ -94,6 +105,7 @@
     (model/union mount mugen)))
 
 (def keyboard-test
+  "test object for keyboard, includes mock keycaps"
   (let [row-num 3
         col-num 5
 
