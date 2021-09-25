@@ -1,7 +1,7 @@
 (ns keyboard-lum-cad.mount-hole
   (:refer-clojure :exclude [use import])
-  (:require [scad-clj.scad :refer :all]
-            [scad-clj.model :refer :all]))
+  (:require 
+            [scad-clj.model :as model]))
 
 ;; define variables
 (def hole-size-real 14.0)
@@ -21,52 +21,54 @@
 
 (def mount-hole
   "mount hole object for cherry MX switch"
-  (let [square-out (square (+ hole-size (* wall-width 2))
+  (let [square-out (model/square (+ hole-size (* wall-width 2))
                            (+ hole-size (* wall-width 2))
                            :center true)
-        square-hole (square hole-size hole-size :center true)
-        square-hollow (difference square-out square-hole)
+        square-hole (model/square hole-size hole-size :center true)
+        square-hollow (model/difference square-out square-hole)
 
-        hollow-box (extrude-linear {:height hole-height :center false}
+        hollow-box (model/extrude-linear {:height hole-height :center false}
                                    square-hollow)
 
         nail-void-height (max (- hole-height nail-height) 0)
 
-        square-nail-void (->> (square nail-size nail-width :center true)
-                              (translate [(/ 2 (+ hole-size nail-size)) 0 0]))
-        nail-void-oneside (extrude-linear {:height nail-void-height :center false}
+        square-nail-void (->> (model/square nail-size nail-width :center true)
+                              (model/translate
+                               [(/ 2 (+ hole-size nail-size)) 0 0]))
+        nail-void-oneside (model/extrude-linear {:height nail-void-height
+                                                 :center false}
                                           square-nail-void)
-        nail-void (union nail-void-oneside
-                         (mirror [1 0 0] nail-void-oneside))
+        nail-void (model/union nail-void-oneside
+                         (model/mirror [1 0 0] nail-void-oneside))
 
-        mount-hole (->> (difference hollow-box
+        mount-hole (->> (model/difference hollow-box
                                     nail-void)
-                        (translate [0 0 (- hole-height)]))]
+                        (model/translate [0 0 (- hole-height)]))]
     mount-hole))
 
 (def mount-corners
   "corner object for cherry MX switch mount hole"
   (let [displace (+ (/ hole-size 2) wall-width)
-        element (->> (cylinder corner-delta hole-height :center true)
-                     (with-fn 16))]
-    {:left-down (translate
+        element (->> (model/cylinder corner-delta hole-height :center true)
+                     (model/with-fn 16))]
+    {:left-down (model/translate
                  [(- displace) (- displace) (- (/ hole-height 2))]
                  element)
-     :right-down (translate
+     :right-down (model/translate
                   [displace (- displace) (- (/ hole-height 2))]
                   element)
-     :right-up (translate
+     :right-up (model/translate
                 [displace displace (- (/ hole-height 2))]
                 element)
-     :left-up (translate
+     :left-up (model/translate
                [(- displace) displace (- (/ hole-height 2))]
                element)}))
 
 (def mount-test
   "test object of mugen"
-  (union mount-hole
-         (->> (hull (mount-corners :left-down)
+  (model/union mount-hole
+         (->> (model/hull (mount-corners :left-down)
                     (mount-corners :right-down)
                     (mount-corners :right-up)
                     (mount-corners :left-up))
-              (translate [30 0 0]))))
+              (model/translate [30 0 0]))))

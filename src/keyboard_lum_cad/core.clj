@@ -1,23 +1,22 @@
 (ns keyboard-lum-cad.core
   (:gen-class)
   (:refer-clojure :exclude [use import])
-  (:require [scad-clj.scad :refer :all]
-            [scad-clj.model :refer :all]
+  (:require [scad-clj.scad :as scad]
             [keyboard-lum-cad.mugen :as mugen]
             [keyboard-lum-cad.mount-hole :as mhole]
             [keyboard-lum-cad.keycap-mock :as kmock]))
 
 (defn part-mugen []
   (spit "things/parts/mugen.scad"
-        (write-scad mugen/mugen-test))
+        (scad/write-scad mugen/mugen-test))
   (println "wrote part mugen.scad"))
 (defn part-mount []
   (spit "things/parts/mount-hole.scad"
-        (write-scad mhole/mount-test))
+        (scad/write-scad mhole/mount-test))
   (println "wrote part mount-hole.scad"))
 (defn part-keymock []
   (spit "things/parts/keycap-mock.scad"
-        (write-scad kmock/keycap-mock))
+        (scad/write-scad kmock/keycap-mock))
   (println "wrote part keycap-mock.scad"))
 
 (def generators
