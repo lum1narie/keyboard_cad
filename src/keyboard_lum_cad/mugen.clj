@@ -1,7 +1,6 @@
 (ns keyboard-lum-cad.mugen
   (:refer-clojure :exclude [use import])
-  (:require [scad-clj.scad :refer :all]
-            [scad-clj.model :refer :all]))
+  (:require [scad-clj.model :as model]))
 
 ;; variables for mugen
 ;;
@@ -33,95 +32,100 @@
         outer-width (+ mugen-size (* wall-width 2))
         hole-width mugen-size
 
-        outer-box (cube outer-width outer-width outer-height :center true)
-        outer-void (cube hole-width hole-width (+ outer-height cover-delta)
-                         :center true)
-        burr-shape (cube burr-width
-                         burr-length
-                         (+ mugen-height (* cover-delta 2))
-                         :center true)
+        outer-box (model/cube outer-width outer-width outer-height :center true)
+        outer-void (model/cube hole-width
+                               hole-width
+                               (+ outer-height cover-delta)
+                               :center true)
+        burr-shape (model/cube burr-width
+                               burr-length
+                               (+ mugen-height (* cover-delta 2))
+                               :center true)
 
-        burr-cut (union
+        burr-cut (model/union
                   (->> burr-shape
-                       (translate [(/ (+ mugen-size burr-length) 2)
-                                   -1.75
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))])
-                       (rotate [0 0 (/ pi 2)]))
+                       (model/translate [(/ (+ mugen-size burr-length) 2)
+                                         -1.75
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))])
+                       (model/rotate [0 0 (/ model/pi 2)]))
                   (->> burr-shape
-                       (translate [(- (/ (+ mugen-size burr-length) 2))
-                                   -1.75
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))])
-                       (rotate [0 0 (/ pi 2)]))
+                       (model/translate [(- (/ (+ mugen-size burr-length) 2))
+                                         -1.75
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))])
+                       (model/rotate [0 0 (/ model/pi 2)]))
                   (->> burr-shape
-                       (translate [-6.25
-                                   (/ (+ mugen-size burr-length) 2)
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))]))
+                       (model/translate [-6.25
+                                         (/ (+ mugen-size burr-length) 2)
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))]))
                   (->> burr-shape
-                       (translate [-6.25
-                                   (- (/ (+ mugen-size burr-length) 2))
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))]))
+                       (model/translate [-6.25
+                                         (- (/ (+ mugen-size burr-length) 2))
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))]))
                   (->> burr-shape
-                       (translate [6.75
-                                   (/ (+ mugen-size burr-length) 2)
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))]))
+                       (model/translate [6.75
+                                         (/ (+ mugen-size burr-length) 2)
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))]))
                   (->> burr-shape
-                       (translate [6.75
-                                   (- (/ (+ mugen-size burr-length) 2))
-                                   (-> (- outer-height mugen-size)
-                                       (/ 2) (+ cover-delta))])))
+                       (model/translate [6.75
+                                         (- (/ (+ mugen-size burr-length) 2))
+                                         (-> (- outer-height mugen-size)
+                                             (/ 2) (+ cover-delta))])))
 
-        outer (->> (difference outer-box outer-void burr-cut)
-                   (translate [0 0 (- (/ outer-height 2))]))
+        outer (->> (model/difference outer-box outer-void burr-cut)
+                   (model/translate [0 0 (- (/ outer-height 2))]))
 
         cover-end (/ (+ hole-width (/ wall-width 2)) 2)
 
         loc-x [-6.75 -2.25 6.75]
         loc-y [(- cover-end) -6.75 6.75 cover-end]
-        lower-cover (->> (polygon [[(get loc-x 1) (get loc-y 3)]
-                                   [(get loc-x 1) (get loc-y 2)]
-                                   [(get loc-x 0) (get loc-y 2)]
-                                   [(get loc-x 0) (get loc-y 1)]
-                                   [(get loc-x 1) (get loc-y 1)]
-                                   [(get loc-x 1) (get loc-y 0)]
-                                   [(get loc-x 2) (get loc-y 0)]
-                                   [(get loc-x 2) (get loc-y 3)]])
-                         (mirror [1 0 0])
-                         (extrude-linear {:height thin-base-height
-                                          :center false})
-                         (translate [0 0 (- outer-height)]))
+        lower-cover (->> (model/polygon [[(get loc-x 1) (get loc-y 3)]
+                                         [(get loc-x 1) (get loc-y 2)]
+                                         [(get loc-x 0) (get loc-y 2)]
+                                         [(get loc-x 0) (get loc-y 1)]
+                                         [(get loc-x 1) (get loc-y 1)]
+                                         [(get loc-x 1) (get loc-y 0)]
+                                         [(get loc-x 2) (get loc-y 0)]
+                                         [(get loc-x 2) (get loc-y 3)]])
+                         (model/mirror [1 0 0])
+                         (model/extrude-linear {:height thin-base-height
+                                                :center false})
+                         (model/translate [0 0 (- outer-height)]))
 
         hic-x [(- cover-end) -6.75 -3.25 -2.25 2.25 4.25 6.75 cover-end]
         hic-y [2.25 3.25 6.75 7.25 cover-end]
-        higher-cover (->> (union (polygon [[(get hic-x 0) (get hic-y 1)]
-                                           [(get hic-x 0) (get hic-y 0)]
-                                           [(get hic-x 2) (get hic-y 0)]
-                                           [(get hic-x 2) (get hic-y 2)]
-                                           [(get hic-x 1) (get hic-y 2)]
-                                           [(get hic-x 1) (get hic-y 1)]])
-                                 (polygon [[(get hic-x 3) (get hic-y 4)]
-                                           [(get hic-x 3) (get hic-y 3)]
-                                           [(get hic-x 5) (get hic-y 3)]
-                                           [(get hic-x 5) (get hic-y 1)]
-                                           [(get hic-x 4) (get hic-y 1)]
-                                           [(get hic-x 4) (get hic-y 0)]
-                                           [(get hic-x 7) (get hic-y 0)]
-                                           [(get hic-x 7) (get hic-y 1)]
-                                           [(get hic-x 6) (get hic-y 1)]
-                                           [(get hic-x 6) (get hic-y 4)]]))
-                          (mirror [1 0 0])
-                          (extrude-linear
+        higher-cover (->> (model/union (model/polygon
+                                        [[(get hic-x 0) (get hic-y 1)]
+                                         [(get hic-x 0) (get hic-y 0)]
+                                         [(get hic-x 2) (get hic-y 0)]
+                                         [(get hic-x 2) (get hic-y 2)]
+                                         [(get hic-x 1) (get hic-y 2)]
+                                         [(get hic-x 1) (get hic-y 1)]])
+                                       (model/polygon
+                                        [[(get hic-x 3) (get hic-y 4)]
+                                         [(get hic-x 3) (get hic-y 3)]
+                                         [(get hic-x 5) (get hic-y 3)]
+                                         [(get hic-x 5) (get hic-y 1)]
+                                         [(get hic-x 4) (get hic-y 1)]
+                                         [(get hic-x 4) (get hic-y 0)]
+                                         [(get hic-x 7) (get hic-y 0)]
+                                         [(get hic-x 7) (get hic-y 1)]
+                                         [(get hic-x 6) (get hic-y 1)]
+                                         [(get hic-x 6) (get hic-y 4)]]))
+                          (model/mirror [1 0 0])
+                          (model/extrude-linear
                            {:height
                             (- (+ socket-height thin-base-height) cover-delta)
                             :center false})
-                          (translate [0 0 (+ (- outer-height) cover-delta)]))
+                          (model/translate
+                           [0 0 (+ (- outer-height) cover-delta)]))
 
-        cover (union lower-cover higher-cover)]
-    (union outer cover)))
+        cover (model/union lower-cover higher-cover)]
+    (model/union outer cover)))
 
 ;; variables for corner
 ;;
@@ -133,26 +137,26 @@
   (let [cover-height (+ mugen-height socket-height thin-base-height)
         displace (+ (/ mugen-size 2) wall-width)
 
-        element (->> (cylinder corner-delta corner-height :center true)
-                     (with-fn 16))]
-    {:left-down (translate
+        element (->> (model/cylinder corner-delta corner-height :center true)
+                     (model/with-fn 16))]
+    {:left-down (model/translate
                  [(- displace) (- displace) (- (/ cover-height 2))]
                  element)
-     :right-down (translate
+     :right-down (model/translate
                   [displace (- displace) (- (/ cover-height 2))]
                   element)
-     :right-up (translate
+     :right-up (model/translate
                 [displace displace (- (/ cover-height 2))]
                 element)
-     :left-up (translate
+     :left-up (model/translate
                [(- displace) displace (- (/ cover-height 2))]
                element)}))
 
 (def mugen-test
   "test object of mugen"
-  (union mugen-cover
-         (->> (hull (mugen-corners :left-down)
-                    (mugen-corners :right-down)
-                    (mugen-corners :right-up)
-                    (mugen-corners :left-up))
-              (translate [30 0 0]))))
+  (model/union mugen-cover
+               (->> (model/hull (mugen-corners :left-down)
+                                (mugen-corners :right-down)
+                                (mugen-corners :right-up)
+                                (mugen-corners :left-up))
+                    (model/translate [30 0 0]))))
