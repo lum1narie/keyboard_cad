@@ -1,7 +1,6 @@
 (ns keyboard-lum-cad.keycap-mock
   (:refer-clojure :exclude [use import])
-  (:require
-   [scad-clj.model :as model]))
+  (:require [scad-clj.model :as model]))
 
 (def mock-delta 0.01)
 (def keycap-mock

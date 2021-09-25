@@ -1,7 +1,6 @@
 (ns keyboard-lum-cad.mount-hole
   (:refer-clojure :exclude [use import])
-  (:require 
-            [scad-clj.model :as model]))
+  (:require [scad-clj.model :as model]))
 
 ;; define variables
 (def hole-size-real 14.0)
@@ -22,13 +21,13 @@
 (def mount-hole
   "mount hole object for cherry MX switch"
   (let [square-out (model/square (+ hole-size (* wall-width 2))
-                           (+ hole-size (* wall-width 2))
-                           :center true)
+                                 (+ hole-size (* wall-width 2))
+                                 :center true)
         square-hole (model/square hole-size hole-size :center true)
         square-hollow (model/difference square-out square-hole)
 
         hollow-box (model/extrude-linear {:height hole-height :center false}
-                                   square-hollow)
+                                         square-hollow)
 
         nail-void-height (max (- hole-height nail-height) 0)
 
@@ -37,19 +36,19 @@
                                [(/ 2 (+ hole-size nail-size)) 0 0]))
         nail-void-oneside (model/extrude-linear {:height nail-void-height
                                                  :center false}
-                                          square-nail-void)
+                                                square-nail-void)
         nail-void (model/union nail-void-oneside
-                         (model/mirror [1 0 0] nail-void-oneside))
+                               (model/mirror [1 0 0] nail-void-oneside))
 
         mount-hole (->> (model/difference hollow-box
-                                    nail-void)
+                                          nail-void)
                         (model/translate [0 0 (- hole-height)]))]
     mount-hole))
 
 (def mount-corners
   "corner object for cherry MX switch mount hole"
   (let [displace (+ (/ hole-size 2) wall-width)
-        element (->> (model/cylinder corner-delta hole-height :center true)
+        element (->> (model/cylinder corner-delta corner-height :center true)
                      (model/with-fn 16))]
     {:left-down (model/translate
                  [(- displace) (- displace) (- (/ hole-height 2))]
@@ -67,8 +66,8 @@
 (def mount-test
   "test object of mugen"
   (model/union mount-hole
-         (->> (model/hull (mount-corners :left-down)
-                    (mount-corners :right-down)
-                    (mount-corners :right-up)
-                    (mount-corners :left-up))
-              (model/translate [30 0 0]))))
+               (->> (model/hull (mount-corners :left-down)
+                                (mount-corners :right-down)
+                                (mount-corners :right-up)
+                                (mount-corners :left-up))
+                    (model/translate [30 0 0]))))
