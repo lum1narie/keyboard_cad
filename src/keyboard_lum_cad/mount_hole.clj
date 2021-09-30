@@ -48,8 +48,9 @@
 (def mount-corners
   "corner object for cherry MX switch mount hole"
   (let [displace (+ (/ hole-size 2) wall-width)
-        element (->> (model/cylinder corner-delta corner-height :center true)
-                     (model/with-fn 16))]
+
+        element (model/cube corner-delta corner-delta corner-height
+                            :center true)]
     {:left-down (model/translate
                  [(- displace) (- displace) (- (/ hole-height 2))]
                  element)

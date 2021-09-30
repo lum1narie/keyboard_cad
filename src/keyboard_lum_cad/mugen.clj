@@ -137,8 +137,8 @@
   (let [cover-height (+ mugen-height socket-height thin-base-height)
         displace (+ (/ mugen-size 2) wall-width)
 
-        element (->> (model/cylinder corner-delta corner-height :center true)
-                     (model/with-fn 16))]
+        element (model/cube corner-delta corner-delta corner-height
+                            :center true)]
     {:left-down (model/translate
                  [(- displace) (- displace) (- (/ cover-height 2))]
                  element)
