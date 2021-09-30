@@ -1,35 +1,70 @@
 (ns keyboard-lum-cad.keyboard
-  (:refer-clojure :exclude [use import])
+  (:refer-clojure :exclude [use import + - * / == < <= > >= not= = min max])
   (:require [scad-clj.model :as model]
             [keyboard-lum-cad.mugen :as mugen]
             [keyboard-lum-cad.mount-hole :as mhole]
-            [keyboard-lum-cad.keycap-mock :as kmock]))
+            [keyboard-lum-cad.keycap-mock :as kmock]
+            [keyboard-lum-cad.multmatrix :as mmx]
+            [clojure.core.matrix :as mx]
+            [clojure.core.matrix.operators :refer :all]))
 
-(def mount-foot-distance 6)
+(mx/set-current-implementation :vectorz)
 
-(defn translate-key
-  "translate block to key's position"
-  [row col block]
-  (let [r 90
-
-        row-angle (/ model/pi 12)
-        col-angle (/ model/pi 12)
-
-        theta (* (- 5 col) row-angle)
-        omega (* (- row 2) col-angle)]
-
-    (->> block
-         (model/translate [0 0 (- r)])
-         (model/rotate [(- omega) 0 0])
-         (model/rotate [0 theta 0])
-         (model/translate [0 0 r]))))
+(def mount-foot-distance 6.0)
 
 (defn translate-mugen
   "translate block to mugen's position"
   [row col block]
+  (let [r 70.0
+        m (mx/matrix [-80.0 115.0 90.0])
+
+        row-angle (/ model/pi 18)
+        row-angle-mf (/ model/pi 18)
+        col-angle (/ model/pi 10)
+        col-angle-inside (- (/ model/pi 2))
+        finger-interval 21.5
+
+        theta (-> (- col 3) (* row-angle) (+ row-angle-mf))
+        omega (-> (- 4 row) (* col-angle) (+ col-angle-inside))
+        inside-pos (+ m
+                      (mx/inner-product
+                       (mmx/to-3-3-matrix
+                        (mmx/rot-matrix [0 0 (- row-angle-mf)]))
+                       (mmx/to-3-3-matrix
+                        (mmx/rot-matrix [col-angle-inside 0 0]))
+                       (mx/matrix
+                        [(-> (- col 3) (* finger-interval))
+                         0
+                         (-> (- col 3) (Math/pow 2) (* 2) (+ r) (-))])))
+        inside-r-vec (mx/inner-product
+                      (mmx/to-3-3-matrix
+                       (mmx/rot-matrix [0 0 (- theta)]))
+                      (mmx/to-3-3-matrix
+                       (mmx/rot-matrix [col-angle-inside 0 0]))
+                      (mx/matrix [0 0 (- r)]))
+        r-vec (mx/inner-product
+               (mmx/to-3-3-matrix
+                (mmx/rot-matrix [0 0 (- theta)]))
+               (mmx/to-3-3-matrix
+                (mmx/rot-matrix [omega 0 0]))
+               (mx/matrix [0 0 (- r)]))
+        key-pos (-> inside-pos
+                    (- inside-r-vec)
+                    (+ r-vec))
+
+        trans-mat (mx/inner-product
+                   (apply mmx/trans-matrix key-pos)
+                   (mmx/rot-matrix [0 0 (- theta)])
+                   (mmx/rot-matrix [omega 0 0]))]
+    (->> block
+         (mmx/multmatrix trans-mat))))
+
+(defn translate-key
+  "translate block to key's position"
+  [row col block]
   (->> block
-       (model/translate [0 0 (- mount-foot-distance)])
-       (translate-key row col)))
+       (model/translate [0 0 mount-foot-distance])
+       (translate-mugen row col)))
 
 (defn place-grid
   "place solid object into grid"
