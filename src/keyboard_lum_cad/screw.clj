@@ -3,9 +3,11 @@
   (:require [scad-clj.model :as model]
             [clojure.core.matrix.operators :refer :all]))
 
-(defn screw-top [screw-r-real screw-head-r-real
-                 head-height foot-height neck-height
-                 side-thickness side-inner-thickness-real]
+(defn screw-top
+  "get top screw object"
+  [screw-r-real screw-head-r-real
+   head-height foot-height neck-height
+   side-thickness side-inner-thickness-real]
   (let [screw-r-err (* screw-r-real 0.1)
         screw-head-r-err (* screw-head-r-real 0.1)
         side-inner-thickness-err (* side-inner-thickness-real 0.1)
@@ -34,9 +36,11 @@
     (->> (model/extrude-rotate screw-2d)
          (model/with-fn 32))))
 
-(defn screw-bottom [screw-r-real nut-r-real
-                    nut-height foot-height neck-height
-                    side-thickness]
+(defn screw-bottom
+  "get bottom screw object"
+  [screw-r-real nut-r-real
+   nut-height foot-height neck-height
+   side-thickness]
   (let [delta 0.01
 
         screw-r-err (* screw-r-real 0.1)
@@ -66,6 +70,7 @@
 
 (defrecord screw-pair [top bottom distance])
 (defn make-screw-pair
+  "get screw pair object"
   [& {:keys [screw-r screw-head-r nut-r distance
              screw-head-height nut-height top-neck-height bottom-neck-height
              top-side-thickness bottom-side-thickness]
@@ -92,12 +97,15 @@
                              bottom-side-thickness)]
     (->screw-pair top bottom distance)))
 
-(defn deploy-screw-pair [pair]
+(defn deploy-screw-pair
+  "place screw pair as objects"
+  [pair]
   (model/union (:top pair)
                (->> (:bottom pair)
                     (model/translate
                      [0 0 (-> (+ (:distance pair) 2) (-))]))))
 
 (def screw-pair-test
+  "test objects from screw pair"
   (let [pair (make-screw-pair)]
     (deploy-screw-pair pair)))
