@@ -6,7 +6,9 @@
 
 (mx/set-current-implementation :vectorz)
 
-(defmulti multmatrix  (fn [m & block] (type m)))
+(defmulti multmatrix
+  "get scad model which shows multmatri"
+  (fn [m & block] (type m)))
 (defmethod multmatrix clojure.lang.PersistentVector [m & block]
   (let [m3-4 (mx/select m (range 3) (range 4))]
     `(:multmatrix ~m3-4 ~@block)))
@@ -24,13 +26,18 @@
      (mapcat #(scad/write-expr (inc depth) %1) block)
      (list (scad/indent depth) "}\n"))))
 
-(defn trans-matrix [x y z]
+(defn trans-matrix
+  "get translate affine transformation matrix"
+  [x y z]
   (mx/matrix [[1 0 0 x]
               [0 1 0 y]
               [0 0 1 z]
               [0 0 0 1]]))
 
-(defn rotv-matrix [a [x y z]]
+(defn rotv-matrix
+  "get rotate affine transformation matrix
+  this will rotate around given vector"
+  [a [x y z]]
   (mx/matrix [[(+ (Math/cos a) (* (Math/pow x 2) (- 1 (Math/cos a))))
                (- (* x y (- 1 (Math/cos a))) (* z (Math/sin a)))
                (+ (* x z (- 1 (Math/cos a))) (* y (Math/sin a)))
@@ -44,21 +51,31 @@
                (+ (Math/cos a) (* (Math/pow z 2) (- 1 (Math/cos a)))) 0]
               [0 0 0 1]]))
 
-(defn rotc-matrix [[x y z]]
+(defn rotc-matrix
+  "get rotate affine transformation matrix
+  this will rotate around axes"
+  [[x y z]]
   (mx/inner-product (rotv-matrix x [1 0 0])
                     (rotv-matrix y [0 1 0])
                     (rotv-matrix z [0 0 1])))
 
-(defn rot-matrix [& args]
+(defn rot-matrix
+  "get rotate affine transformation matrix"
+  [& args]
   (if (number? (first args))
     (rotv-matrix (first args) (rest args))
     (rotc-matrix (first args))))
 
-(defn scale-matrix [x y z]
+(defn scale-matrix
+  "get scale affine transformation matrix"
+  [x y z]
   (mx/matrix [[x 0 0 0]
               [0 y 0 0]
               [0 0 z 0]
               [0 0 0 1]]))
 
-(defn to-3-3-matrix [m]
+(defn to-3-3-matrix
+  "get the intersections of top 3 rows and left 3 columns to make 3x3 matrix
+  from given matrix"
+  [m]
   (mx/select m (range 3) (range 3)))
