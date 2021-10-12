@@ -21,11 +21,11 @@
         row-angle (/ model/pi 18)
         row-angle-mf (/ model/pi 18)
         col-angle (/ model/pi 10)
-        col-angle-inside (- (/ model/pi 2))
+        col-angle-inside (- (/ model/pi 3))
         finger-interval 21.5
 
         theta (-> (- col 3) (* row-angle) (+ row-angle-mf))
-        omega (-> (- 4 row) (* col-angle) (+ col-angle-inside))
+        omega (-> (- 5 row) (* col-angle) (+ col-angle-inside))
         inside-pos (+ m
                       (mx/inner-product
                        (mmx/to-3-3-matrix
@@ -128,7 +128,7 @@
 
 (def keyboard
   "WIP keyboard object"
-  (let [row-num 3
+  (let [row-num 4
         col-num 5
 
         mount (place-and-fill-grid row-num col-num translate-key
@@ -147,7 +147,7 @@
 
 (def keyboard-test
   "test object for keyboard, includes mock keycaps"
-  (let [row-num 3
+  (let [row-num 4
         col-num 5
 
         keycaps (place-grid row-num col-num translate-keycap
