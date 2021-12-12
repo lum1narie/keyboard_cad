@@ -14,13 +14,6 @@
 (def wall-width 1.5)
 (def thin-base-height 1.5)
 
-(def mugen-size-err (* mugen-size-real 0.025))
-(def mugen-height-err (* mugen-height-real 0.025))
-(def socket-height-err (* socket-height-real 0.025))
-
-(def mugen-size (+ mugen-size-real mugen-size-err))
-(def mugen-height (+ mugen-height-real mugen-height-err))
-(def socket-height (+ socket-height-err socket-height-real))
 
 ;; variables for cover
 ;;
@@ -28,7 +21,15 @@
 
 (def mugen-cover
   "cover object for \"mugen no kanosei ConTaiNeR\""
-  (let [outer-height (+ mugen-height socket-height thin-base-height)
+  (let [mugen-size-err (* mugen-size-real 0.025)
+        mugen-height-err (* mugen-height-real 0.025)
+        socket-height-err (* socket-height-real 0.025)
+
+        mugen-size (+ mugen-size-real mugen-size-err)
+        mugen-height (+ mugen-height-real mugen-height-err)
+        socket-height (+ socket-height-err socket-height-real)
+
+        outer-height (+ mugen-height socket-height thin-base-height)
         outer-width (+ mugen-size (* wall-width 2))
         hole-width mugen-size
 
@@ -134,7 +135,15 @@
 
 (def mugen-corners
   "corner object for \"mugen no kanosei ConTaiNeR\""
-  (let [cover-height (+ mugen-height socket-height thin-base-height)
+  (let [mugen-size-err (* mugen-size-real 0.025)
+        mugen-height-err (* mugen-height-real 0.025)
+        socket-height-err (* socket-height-real 0.025)
+
+        mugen-size (+ mugen-size-real mugen-size-err)
+        mugen-height (+ mugen-height-real mugen-height-err)
+        socket-height (+ socket-height-err socket-height-real)
+
+        cover-height (+ mugen-height socket-height thin-base-height)
         displace (+ (/ mugen-size 2) wall-width)
 
         element (model/cube corner-delta corner-delta corner-height
