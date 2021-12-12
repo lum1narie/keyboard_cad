@@ -36,11 +36,10 @@
    "keycap-mock" part-keymock
    "screw" part-screw})
 
-(defn nop [] nil)
-
 (defn -main
   [& args]
   (.mkdirs (java.io.File. "things/parts/"))
   (if (empty? args)
-    (dorun (map #(%) (vals generators)))
-    (dorun (map #((generators % nop)) args))))
+    (doseq [g (vals generators)] (g))
+    (doseq [g (map #(generators %) args)] (g))))
+
